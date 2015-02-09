@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <title>CS628</title>
+    </head>
+    <!-- body is a keyword -->
+    <!-- don't put comments inside the style -->
+    <style>        
+        body {background-color: grey;}
+        #container {width: 800px; background-color: white;}
+        #header {height: 70px; line-height: 70px; background-color: blue; color: white;}
+        #main {background-color: white; height: 300px}
+        #footer {height: 30px; line-height: 30px; background-color: blue; color: white;}
+        table { padding-top: 150px; padding-left: 200px;}
+    </style> <!-- height == line-height vertically centers the text -->
+    
+    <!-- design layout
+       grey
+      - -  - - - - - - - - - - - - -  - 
+        Monmouth Registration System {blue}
+        ---------------------------
+          User Name |            |
+          Password  |            | {white}
+          
+               button->Login
+        ---------------------------
+        Copyright     {blue}
+      ---------------------------------
+      {grey}
+    -->
+    <body>
+      <div id="container">
+        <div id="header" >
+            <!-- inside the header you could also use
+            style="padding:20px 100px" -->
+            <h1 align="center"> Monmouth University Registration System</h1>
+        </div>
+        
+        <div id="main">
+            <!-- we want to create a form here -->
+            <!-- method how to transfer data to server
+                 post = usually for forms - more secure
+                 get = get adds data to URL so it is less secure
+                 -->
+            <form action="" method="post">
+                <table>
+                    <tr>
+                        <td>User Name:</td>
+                        <td><input type="text" name="uname"></td>
+                    </tr>
+                    <tr>
+                        <td>Password:</td>
+                        <td><input type="password" name="psword" /></td>
+                    </tr>
+                    <!-- <tr>
+                        <td></td><td><input type="submit" value="Login"/></td>
+                    </tr> -->
+                </table>
+                <div style="padding: 0px 350px;">
+                    <input type="submit" value="Login"/>
+                </div>                
+            </form>
+        </div>
+        
+        <div id="footer">
+            <h5 align="center">Copyright 2015 Monmouth University</h5>
+        </div>
+      </div>
+    </body>
+    
+</html>
