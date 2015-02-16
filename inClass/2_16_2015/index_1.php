@@ -84,7 +84,7 @@
                 </table>
                 <div style="padding: 5px 410px;">
                     <input type="submit" value="Login"/>
-                </div>                
+                </div>
             </form>
             <form  action="" method="POST">
                 <table>
@@ -98,13 +98,12 @@
                 </table>
                 <div style="padding: 5px 320px;">
                     <input type="submit" value="Register"/>
-                </div>  
+                </div>
             </form>
-        </div>        
+        </div>
         <div id="footer">
             <h5 align="center">Copyright 2015 Monmouth University</h5>
         </div>
       </div>
     </body>
-    
 </html>
