@@ -39,41 +39,23 @@
             <div style="color: red;" align="center">
             <?php
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                  if($_POST['button'] == 'Login') {
-                    #the form was submitted!
-                    #isset makes sure its there so we don't get a bunch of errors
                     $uname = (isset($_POST['uname']) ? $_POST['uname'] : '');
                     $psword = (isset($_POST['psword']) ? $_POST['psword'] : '');
+                    $psword2 = (isset($_POST['psword2']) ? $_POST['psword2'] : '');
+                    $fname = (isset($_POST['fname']) ? $_POST['fname'] : '');
+                    $lname = (isset($_POST['$lname']) ? $_POST['$lname'] : '');
+                    $major = (isset($_POST['major']) ? $_POST['major'] : '');
+                    $address = (isset($_POST['address']) ? $_POST['address'] : '');
+                    $city = (isset($_POST['city']) ? $_POST['city'] : '');
+                    $state = (isset($_POST['state']) ? $_POST['state'] : '');
+                    $email = (isset($_POST['email']) ? $_POST['email'] : '');
+                    $phone = (isset($_POST['$phone']) ? $_POST['$phone'] : '');
                     
-                    $errors = array();
-                    if (empty($uname)) {
-                      //= adds to the end of the array
-                      // += doesn't do that correct
-                      $errors[] = "You forgot to enter the user name.";
-                    }
-                    if (empty($uname)) {
-                      $errors[] = "You forgot to enter the password.";
-                    }
-                    
-                    if (empty($errors)) {
-                       //alls good so do good things
-                    } else {
-                      //print error information
-                      foreach ( $errors as $error) {
-                          echo "$error";
-                          echo "<br>";
-                      }
-                    }
-                  } else {
-                    // We are registering
-                    $role = (isset($_POST['role']) ? $_POST['role'] : '');
-                    if(empty($role)) {
-                      echo "You must select a role.<br>";
-                    } else {
-                      //display a new page for registration
-                      header('LOCATION: register.php');
-                    }
-                  }
+                    //1) make sure that everything has a value
+                    //2) psword and psword2 match
+                    //3) psword is 'good' A-Za-Z0-9 etc
+                    //4) validate email
+                    //5) validate phone                    
                 }
             ?>
             </div>
@@ -84,35 +66,106 @@
                  get = get adds data to URL so it is less secure
                  -->
             <form action="" method="POST">
-                <table style = "padding-top: 75px;">
+                <table style = "padding-top: 10px;">
                     <tr>
                         <td>User Name:</td>
-                        <td><input type="text" name="uname"></td>
+                        <td>
+                            <input type="text" name="uname" value=
+                            <?php echo "\"".(isset($_POST['uname']) ? $_POST['uname']:"")."\""; ?> />
+                        </td>
                     </tr>
                     <tr>
                         <td>Password:</td>
-                        <td><input type="password" name="psword" /></td>
+                        <td>
+                            <input type="password" name="psword"  />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Confirm Password:</td>
+                        <td>
+                            <input type="password" name="psword2" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>First Name:</td>
+                        <td>
+                            <input type="text" name="fname" value=
+                            <?php echo "\"".(isset($_POST['fname']) ? $_POST['fname']:"")."\""; ?> />
+                        </td>
+                    </tr>
+                    <tr>
+                    <td>Last Name:</td>
+                        <td>
+                            <input type="text" name="lname" value=
+                            <?php echo "\"".(isset($_POST['lname']) ? $_POST['lname']:"")."\""; ?> />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Major:</td>
+                        <td>
+                            <?php //Drop down in PHP 
+                              $majors = array("MA","CS","SE","EN","HS","BM");
+                              echo "<select name=\"major\" >";
+                              $maj = (isset($_POST['major']) ? $_POST['major']: '');
+                              foreach ($majors as $major) {
+                                echo '<option value="'.$major.'"';
+                                if($maj == $major) {
+                                    echo ' selected = "selected"';
+                                }
+                                echo '>'.$major.'</option>';
+                              }
+                              echo "</select>";
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Address</td>
+                        <td>
+                            <input type="text" name="address" value=
+                            <?php echo "\"".(isset($_POST['address']) ? $_POST['address']:"")."\""; ?> />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>City</td>
+                        <td>
+                            <input type="text" name="city" value=
+                            <?php echo "\"".(isset($_POST['city']) ? $_POST['city']:"")."\""; ?> />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>State</td>
+                        
+                        <td><?php //Drop down in PHP 
+                              $states = array("NJ","PA","FL","MN","MO","NY");
+                              echo "<select name=\"state\">";
+                              $stat = (isset($_POST['state']) ? $_POST['state']: '');
+                              foreach ($states as $state) {
+                                echo '<option value="'.$state.'"';
+                                if($stat == $state) {
+                                    echo ' selected = "selected"';
+                                }
+                                echo '>'.$state.'</option>';
+                              }
+                              echo "</select>";
+                            ?></td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>
+                            <input type="text" name="email" value=
+                            <?php echo "\"".(isset($_POST['email']) ? $_POST['email']:"")."\""; ?> />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Phone</td>
+                        <td>
+                            <input type="text" name="phone" value=
+                            <?php echo "\"".(isset($_POST['phone']) ? $_POST['phone']:"")."\""; ?> />
+                        </td>
                     </tr>
                 </table>
                 <div style="padding: 5px 410px;">
-                    <input type="submit" name="button" value="Login"/>
-                </div>
-            </form>
-            <form  action="" method="POST">
-                <table>
-                    <tr>
-                    <td>Role:</td>
-                    <td>
-                        <input type="radio" name="role" value="Admin">Admin</input>
-                        <input type="radio" name="role" value="Student">Student</input>
-                    </td>
-                    </tr>
-                </table>
-                <div style="padding: 5px 320px;"> <!-- same name as the other button
-                                                       so we can see the value on submit
-                                                       to determine which form was submitted
-                                                  -->
-                    <input type="submit" name="button" value="Register"/>
+                    <input type="submit" name="button" value="register"/>
                 </div>
             </form>
         </div>
