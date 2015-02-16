@@ -10,7 +10,7 @@
         #header {height: 70px; line-height: 70px; background-color: blue; color: white;}
         #main {background-color: white; height: 300px}
         #footer {height: 30px; line-height: 30px; background-color: blue; color: white;}
-        table { padding-top: 150px; padding-left: 200px;}
+        table { padding-left: 200px;}
     </style> <!-- height == line-height vertically centers the text -->
     
     <!-- design layout
@@ -42,8 +42,6 @@
                   #the form was submitted!
                   $uname = $_POST['uname'];
                   $psword = $_POST['psword'];
-                  $major = $_POST['major'];
-                  $gender = $_POST['gender'];
                   
                   $errors = array();
                   if (empty($uname)) {
@@ -63,7 +61,7 @@
                         echo "$error";
                         echo "<br>";
                     }
-                  }                  
+                  }
                 }
             ?>
             </div>
@@ -74,7 +72,7 @@
                  get = get adds data to URL so it is less secure
                  -->
             <form action="" method="POST">
-                <table>
+                <table style = "padding-top: 75px;">
                     <tr>
                         <td>User Name:</td>
                         <td><input type="text" name="uname"></td>
@@ -83,44 +81,24 @@
                         <td>Password:</td>
                         <td><input type="password" name="psword" /></td>
                     </tr>
-                    <tr>
-                        <td>Major:</td>
-                        <td>
-                            <?php //Drop down in PHP 
-                              $majors = array("MA","CS","SE","EN","HS","BM");
-                              echo "<select name=\"major\">";
-                              foreach ($majors as $major) {
-                                echo "<option value\"$major\">$major</option>";
-                              }
-                              echo "</select>";
-                            ?>
-                            <!-- drop down
-                            <select name="major">
-                                <option value="mt">MT</option>
-                                <option value="cs">CS</option>
-                                <option value="se">SE</option>
-                                <option value="en">EN</option>
-                                <option value="hs">HS</option>
-                            </select>
-                            -->
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Gender:</td>
-                        <td> <!-- same name only lets one get selected not both -->
-                            <input type="radio" name="gender"
-                                   value="Male" checked="checked">Male</input>
-                            <input type="radio" name="gender" value="Female">Female</input>
-                        </td>
-                        
-                    </tr>
-                    <!-- <tr>
-                        <td></td><td><input type="submit" value="Login"/></td>
-                    </tr> -->
                 </table>
-                <div style="padding: 5px 350px;">
+                <div style="padding: 5px 410px;">
                     <input type="submit" value="Login"/>
                 </div>                
+            </form>
+            <form  action="" method="POST">
+                <table>
+                    <tr>
+                    <td>Role:</td>
+                    <td>
+                        <input type="radio" name="role" value="Admin">Admin</input>
+                        <input type="radio" name="role" value="Student">Student</input>
+                    </td>
+                    </tr>
+                </table>
+                <div style="padding: 5px 320px;">
+                    <input type="submit" value="Register"/>
+                </div>  
             </form>
         </div>        
         <div id="footer">
