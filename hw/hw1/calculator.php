@@ -72,9 +72,13 @@
                         <td> <!-- result area so handle forms POSTing here -->
                             <?php
                                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                                    $first = (isset($_POST['first']) ? $_POST['first'] : '');
-                                    $operator = (isset($_POST['operator']) ? $_POST['operator'] : '');
-                                    $second = (isset($_POST['second']) ? $_POST['second'] : '');
+                                    // No need to use isset since everything is in
+                                    // drop downs.  That means there will always be
+                                    // a value for each
+                                    $first = $_POST['first'];
+                                    $operator = $_POST['operator'];
+                                    $second = $_POST['second'];
+                                    
                                     if($operator == "+") {
                                         echo ($first + $second);
                                     } elseif($operator =="-") {
