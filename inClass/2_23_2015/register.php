@@ -111,10 +111,6 @@
                     }
                     
                     if($valid) {
-                      //1. connect to database
-                      //2. define a query insert record to ser
-                      //3. execute the query
-                      //4. sanity check (was he inserted)
                       //or die shows an message when that does not work
                         $dbc = mysqli_connect('localhost', 'webuser', 'webuser', 'registration')
                             or die("Cannot connect to database");
@@ -143,7 +139,6 @@
                         
                         //execute the query
                         $r = mysqli_query($dbc, $q);
-                        
                         //check to make sure it's there
                         if($r) {
                            echo "Record was inserted to db"; 
