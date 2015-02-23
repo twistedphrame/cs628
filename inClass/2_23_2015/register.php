@@ -38,6 +38,11 @@
         <div id="main">
             <div style="color: red;" align="center">
             <?php
+                $role ='';
+                if(isset($_GET['role'])) {
+                    $role = $_GET['role'];
+                }
+                
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $uname = (isset($_POST['uname']) ? $_POST['uname'] : '');
                     $psword = (isset($_POST['psword']) ? $_POST['psword'] : '');
@@ -50,60 +55,61 @@
                     $state = (isset($_POST['state']) ? $_POST['state'] : '');
                     $email = (isset($_POST['email']) ? $_POST['email'] : '');
                     $phone = (isset($_POST['phone']) ? $_POST['phone'] : '');
+                    $role = $_POST['role'];
                     
-                    $_SESSION['errors'] = array();
+                    $errors = array();
                     if(empty($uname)) {
-                        $_SESSION['errors'][] = "User Name must be specified";
+                        $errors[] = "User Name must be specified";
                     } else {
-                        $_SESSION['errors'][] = '';
+                        $errors[] = '';
                     }
                     if(empty($psword)
                        || empty($psword2)) {
-                        $_SESSION['errors'][] = "Password must be specified";
+                        $errors[] = "Password must be specified";
                     } elseif (!($psword === $psword2)) {
-                        $_SESSION['errors'][] = "Passwords do not match";
+                        $errors[] = "Passwords do not match";
                     } else {
-                        $_SESSION['errors'][] = '';
+                        $errors[] = '';
                     }
                     
                     if(empty($fname)) {
-                        $_SESSION['errors'][] = "First Name must be specified";
+                        $errors[] = "First Name must be specified";
                     } else {
-                        $_SESSION['errors'][] = '';
+                        $errors[] = '';
                     }
                     
                     if(empty($lname)) {
-                        $_SESSION['errors'][] = "Last Name must be specified";
+                        $errors[] = "Last Name must be specified";
                     } else {
-                        $_SESSION['errors'][] = '';
+                        $errors[] = '';
                     }
                     
                     if(empty($address)) {
-                        $_SESSION['errors'][] = "Address must be specified";
+                        $errors[] = "Address must be specified";
                     } else {
-                        $_SESSION['errors'][] = '';
+                        $errors[] = '';
                     }
                     
                     if(empty($city)) {
-                        $_SESSION['errors'][] = "City must be specified";
+                        $errors[] = "City must be specified";
                     } else {
-                        $_SESSION['errors'][] = '';
+                        $errors[] = '';
                     }
                     
                     if(empty($email)) {
-                        $_SESSION['errors'][] = "Email must be specified";
+                        $errors[] = "Email must be specified";
                     } else {
-                        $_SESSION['errors'][] = '';
+                        $errors[] = '';
                     }
                     
                     if(empty($phone)) {
-                        $_SESSION['errors'][] = "Email must be specified";
+                        $errors[] = "Email must be specified";
                     } else {
-                        $_SESSION['errors'][] = '';
+                        $errors[] = '';
                     }
                     
                     $valid = true;
-                    foreach($_SESSION['errors'] as $error) {
+                    foreach($errors as $error) {
                         if(!empty($error)) {
                             $valid = false;
                             break;
@@ -125,9 +131,10 @@
                                                 city,
                                                 state,
                                                 email,
-                                                phone) VALUES
+                                                phone,
+                                                role) VALUES
                                                ('$uname',
-                                                '$psword',
+                                                SHA1('$psword'),
                                                 '$fname',
                                                 '$lname',
                                                 '$major',
@@ -135,7 +142,8 @@
                                                 '$city',
                                                 '$state',
                                                 '$email',
-                                                '$phone')";
+                                                '$phone',
+                                                '$role')";
                         
                         //execute the query
                         $r = mysqli_query($dbc, $q);
@@ -147,6 +155,11 @@
                         }
                     }
                     
+                }
+                
+                if(empty($role)) {
+                    echo "No role set, cannot register.";
+                    return;
                 }
             ?>
             </div>
@@ -165,8 +178,8 @@
                             <input type="text" name="uname" value=
                             <?php echo "\"".(isset($_POST['uname']) ? $_POST['uname']:"")."\""; ?> />
                             <?php
-                             if(isset($_SESSION['errors']))
-                                echo $_SESSION['errors'][0];
+                             if(isset($errors))
+                                echo $errors[0];
                             ?>
                         </div>
                         </td>
@@ -177,8 +190,8 @@
                             <div style="color: red">
                             <input type="password" name="psword"  />
                             <?php
-                                if(isset($_SESSION['errors']))
-                                    echo $_SESSION['errors'][1];
+                                if(isset($errors))
+                                    echo $errors[1];
                             ?>
                             </div>
                         </td>
@@ -196,8 +209,8 @@
                             <input type="text" name="fname" value=
                             <?php echo "\"".(isset($_POST['fname']) ? $_POST['fname']:"")."\""; ?> />
                             <?php
-                                if(isset($_SESSION['errors']))
-                                    echo $_SESSION['errors'][2];
+                                if(isset($errors))
+                                    echo $errors[2];
                             ?>
                             </div>
                         </td>
@@ -209,8 +222,8 @@
                             <input type="text" name="lname" value=
                             <?php echo "\"".(isset($_POST['lname']) ? $_POST['lname']:"")."\""; ?> />
                             <?php
-                                if(isset($_SESSION['errors']))
-                                    echo $_SESSION['errors'][3];
+                                if(isset($errors))
+                                    echo $errors[3];
                             ?>
                             </div>
                         </td>
@@ -240,8 +253,8 @@
                             <input type="text" name="address" value=
                             <?php echo "\"".(isset($_POST['address']) ? $_POST['address']:"")."\""; ?> />
                             <?php
-                                if(isset($_SESSION['errors']))
-                                    echo $_SESSION['errors'][4];
+                                if(isset($errors))
+                                    echo $errors[4];
                             ?>
                             </div>
                         </td>
@@ -253,8 +266,8 @@
                             <input type="text" name="city" value=
                             <?php echo "\"".(isset($_POST['city']) ? $_POST['city']:"")."\""; ?> />
                             <?php
-                                if(isset($_SESSION['errors']))
-                                    echo $_SESSION['errors'][5];
+                                if(isset($errors))
+                                    echo $errors[5];
                             ?>
                             </div>
                         </td>
@@ -283,8 +296,8 @@
                             <input type="text" name="email" value=
                             <?php echo "\"".(isset($_POST['email']) ? $_POST['email']:"")."\""; ?> />
                             <?php
-                                if(isset($_SESSION['errors']))
-                                    echo $_SESSION['errors'][6];
+                                if(isset($errors))
+                                    echo $errors[6];
                             ?>
                             </div>
                         </td>
@@ -296,11 +309,15 @@
                             <input type="text" name="phone" value=
                             <?php echo "\"".(isset($_POST['phone']) ? $_POST['phone']:"")."\""; ?> />
                             <?php
-                                if(isset($_SESSION['errors']))
-                                    echo $_SESSION['errors'][7];
+                                if(isset($errors))
+                                    echo $errors[7];
                             ?>
                             </div>
                         </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="hidden" name="role" value ="<?php echo $role ?>"</td>
                     </tr>
                 </table>
                 <div style="padding: 5px 180px;">

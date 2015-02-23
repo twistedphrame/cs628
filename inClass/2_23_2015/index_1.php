@@ -50,19 +50,64 @@
                       //= adds to the end of the array
                       // += doesn't do that correct
                       $errors[] = "You forgot to enter the user name.";
+                    } else {
+                      $errors[] = '';
                     }
-                    if (empty($uname)) {
+                    if (empty($psword)) {
                       $errors[] = "You forgot to enter the password.";
+                    } else {
+                      $errors[] = '';
                     }
                     
-                    if (empty($errors)) {
+                    $valid = true;
+                    foreach ($errors as $err) {
+                        if(!empty($err)) {
+                            $valid = false;
+                        }
+                    }
+                    if ($valid) {
                        //alls good so do good things
-                    } else {
-                      //print error information
-                      foreach ( $errors as $error) {
-                          echo "$error";
-                          echo "<br>";
-                      }
+                       //we can log in.
+                       //Connect DB
+                       $dbc = mysqli_connect('localhost', 'webuser', 'webuser', 'registration')
+                                             or die("Cannot connect to database");
+                        // search user table to find the user
+                        $q = "SELECT * FROM users WHERE uname = '$uname'";
+                        //perform select
+                        $result = mysqli_query($dbc, $q);
+                        //how many rows did we get?
+                        $num = mysqli_num_rows($result);
+                        if($num == 1) { //found the user
+                            //will only be one user/record returned
+                            $row = mysqli_fetch_array($result);
+                            if ($row['psword'] == SHA1($psword)) {
+                                //pass match so we can do things
+                                echo "Password matches";
+                                //jump to another user page and such
+                                //But! we do session control FIRST!
+                                //we can use $_SESSION var
+                                // or we use a cookie
+                                session_start();//the session started
+                                $_SESSION['uname'] = $uname;//set session vars here
+                                $_SESSION['fname'] = $row['fname']; //for a welcome msg or whater
+                                $_SESSION['role'] = $row['role'];
+                                
+                                if ($row['role'] === "Student") {
+                                    header("LOCATION: student.php");
+                                } else { //It's an admin!
+                                    header("LOCATION: admin.php");
+                                }                                
+                            } else {
+                                $errors[0] = '';
+                                $errors[1] = "Password is incorrect";
+                            }
+                        } else { //unknown user
+                            $errors[0] = "Could not find user.";
+                            $errors[1] = '';
+                        }
+                        //if found
+                            // if password is correct, do some things
+                            //else report incorrect pass
                     }
                   } else {
                     // We are registering
@@ -71,7 +116,8 @@
                       echo "You must select a role.<br>";
                     } else {
                       //display a new page for registration
-                      header('LOCATION: register.php');
+                      //This is a GET call since info is held in the URL
+                      header('LOCATION: register.php?role='.$role);
                     }
                   }
                 }
@@ -86,12 +132,32 @@
             <form action="" method="POST">
                 <table style = "padding-top: 75px;">
                     <tr>
+                        
                         <td>User Name:</td>
-                        <td><input type="text" name="uname"></td>
+                        <td>
+                            <div style ="color: red;">
+                                <input type="text" name="uname">
+                                <?php
+                                  if (isset($errors)) {
+                                    echo $errors[0];
+                                  }
+                                ?>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
+                        
                         <td>Password:</td>
-                        <td><input type="password" name="psword" /></td>
+                        <td>
+                            <div style ="color: red;">
+                                <input type="password" name="psword" />
+                                <?php
+                                  if (isset($errors)) {
+                                    echo $errors[1];
+                                  }
+                                ?>
+                            </div>
+                        </td>
                     </tr>
                 </table>
                 <div style="padding: 5px 410px;">
