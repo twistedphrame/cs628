@@ -34,97 +34,83 @@
 	<div id="content">
 		<div style="color: red;">
 		<?php
+		/**
+		 *Update the given column name with the given value for the given userName
+		 *with the given DB connection
+		 */
+		  function update($connection, $colName, $colVal, $userName) {
+				$query = "UPDATE users SET $colName='$colVal' where uname='$userName'";
+        return mysqli_query($connection, $query);				
+			}		
+		?>
+			
+		<?php
+		$errors = array();
+		$errors["lock"] ="";
+		$errors["uname"]= "";
+		$errors["psword"]= "";
 		if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 			if($_POST['button']=='Login'){
 				$uname= $_POST['uname'];
 				$psword= $_POST['psword'];
 			
-				$error = array();
+				
 		
-				if(empty($uname)) $error[]= "You forgot to enter user name.";
-				if(empty($psword)) $error[]= "You forgot to enter password.";
-			
-				if(empty($error)) {
-					/*
-					connect to database
-					search users table to find the user
-					if found
-						verify password
-						if correct
-							//do something here
-						else
-							report incorrect password
-					else
-						report unknown user
-					*/
+				if(empty($uname)) $errors["uname"]= "You forgot to enter user name.";
+				if(empty($psword)) $errors["psword"]= "You forgot to enter password.";
+			  
+				if(empty($errors)) {
 					$dbc = mysqli_connect('localhost', 'root', 'huntin', 'reg2')
-						or die("cannot connect to database.");
+																or die("cannot connect to database.");
 					
-					$q = "SELECT * FROM users WHERE uname = '$uname'";
-					
-					$r = mysqli_query($dbc, $q);
-					
-					$num = mysqli_num_rows($r);
-					
+					$q = "SELECT * FROM users WHERE uname = '$uname'";					
+					$r = mysqli_query($dbc, $q);					
+					$num = mysqli_num_rows($r);					
 					if ($num == 1){
 						$row = mysqli_fetch_array($r);
-                                                $locked = false;
-						if(isset($row['lockTime']) && !empty($row['lockTime'])) {
-	                                             $lockTime = strtotime($row['lockTime']);
-                                                 
-                                               if($lockTime < strtotime("- 1 min") {
-					            //LOCKED
-                                                   $locked = true;
-                                                   echo "Cannot login for $uname is locked try again later.";
-                                                 } else {//clear the lock time
-						 $q = "UPDATE users SET lockTime='' where uname='$uname'";
-                                                 $r = mysqli_query($dbc, $q);
-					       }
-                                               }				
-                                               
-                                                if(!$locked) {
-						$pwd = SHA1($psword);
-						
-						if ($pwd == $row['psword']){
-                                                                                                   
-						  $q = "UPDATE users SET attempts='0' where uname='$uname'";
-						  $r = mysqli_query($dbc, $q);
-
- 							session_start();
-							
-							$_SESSION['uname'] = $uname;
-							$_SESSION['fname'] = $row['fname'];
-							
-							if($row['role'] == 'student')
-								//header('LOCATION: student.php');
-								echo "<script>window.open('student.php', '_SELF')</script>";
-							else 
-								header('LOCATION: admin.php');
-						}
-						else {
-							echo "incorrect password";
-						  $attempts = $row['attempts']
-                                                  $attempts = $attempts + 1;
-                                                  if($attempts == 3) {
-                                                    $attemtps = $attempts % 3;
-                  				    $date = date('Y-m-d H:i:s');
-                                                    $q = "UPDATE users SET lockTime='$date' where uname='$uname'";
-                                                    $r = mysqli_query($dbc, $q);
-					          }
-						  $q = "UPDATE users SET attempts='$attempts' where uname='$uname'";
-						  $r = mysqli_query($dbc, $q);
-						}
-                                           }
+						$locked = false;
+						if(isset($row['lock_time']) && !empty($row['lock_time'])) {
+							$lockTime = strtotime($row['lock_time']);
+							$minAgo = strtotime("- 1 min");
+							if($lockTime > $minAgo) {//lock for  minute
+	            //LOCKED
+                $locked = true;
+								$waitTime = $lockTime-$minAgo;
+								$errors["lock"] = "You are blocked from accessing the"
+									               + " system. You need to wait for $waitTime seconds.";
+								echo "here" + $errors["lock"];
+              } else {//clear the lock time
+                 $r = update($dbc, "lock_time", "NULL", $uname);
+			        }
+            }
+            if(!$locked) {
+				  		$pwd = SHA1($psword);
+							if ($pwd == $row['psword']){
+        			  $q = "UPDATE users SET attempts='0' where uname='$uname'";
+				  		  $r = mysqli_query($dbc, $q);
+   							session_start();
+								$_SESSION['uname'] = $uname;
+								$_SESSION['fname'] = $row['fname'];
+								header('LOCATION: login.html');
+								}
+								else {
+									if(isset($row['attempts'])) {
+										$attempts = $row['attempts'];
+									} else {
+										$attempts = 0;
+									}									
+									$attempts = $attempts + 1;
+									$errors["psword"] = "Incorrect Password " + 3- $attempts + " attempts left.";
+									if($attempts == 3) {
+										$attempts = $attempts % 3; // only store 0 - 2
+										$r = update($dbc, "lock_time", date('Y-m-d H:i:s'), $uname);
+									}
+									$r = update($dbc, "attempts", $attempts, $uname);
+								}
+              }
 					}
-					else 
-						echo "unknown username.";
-						
-				}
-				else {
-					//print error information
-					foreach ($error as $err){
-						echo $err;
-						echo "<br>";
+					else {
+						$errors["uname"]="unknown username.";
 					}
 				}
 			}
@@ -143,18 +129,46 @@
 		<div style = "padding: 50px 0px">
 		<form action="" method="POST">
 			<center><table>
+			  <tr>
+					<td></td>
+					<td>
+						<div style="color: red">
+					    <?php echo $errors["uname"]; ?>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<div style="color: red">
+					    <?php echo $errors["psword"]; ?>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<div style="color: red">
+					    <?php echo $errors["lock"]; ?>
+						</div>
+					</td>
+				</tr>
 				<tr>
 					<td>Username:</td>
-					<td><input type="text" name="uname"></td>					
+					<td>						
+						<input type="text" name="uname">
+					</td>
 				</tr>
 				<tr>
 					<td>Password:</td>
-					<td><input type="password" name="psword"></td>	
+					<td>
+						<input type="password" name="psword">
+					</td>
 				</tr>
 	
 			</table></center>
-			<div style="padding: 0px 450px" >
-				<input type="submit" name="button" value="Login" >
+			<div style="padding: 0px 450px;" >
+				<input type="submit" name="button" value="Login" />
 			</div>
 		</form>
 		</div>
