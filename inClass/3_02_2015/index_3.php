@@ -142,7 +142,12 @@
 				}
 			}
 			else {   //register button was hit
-				header('LOCATION: register.php');
+				$role = $_POST['role'];
+				if (empty($role)) 
+					echo "You forgot to select a role.";
+				else
+					header('LOCATION: register.php?role='.$role);
+					//echo "<script>window.open('register.php', '_SELF')</script>";
 			}
 		}
 		?>
