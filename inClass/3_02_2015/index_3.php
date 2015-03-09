@@ -34,78 +34,104 @@
 	<div id="content">
 		<div style="color: red;">
 		<?php
+		/**
+		 *Update the given column name with the given value for the given userName
+		 *with the given DB connection
+		 */
+		  function update($connection, $colName, $colVal, $userName) {
+				$query = "UPDATE users SET $colName='$colVal' where uname='$userName'";
+        return mysqli_query($connection, $query);				
+			}
+			$LOCK_STRING = "lock";
+			$UNAME_STRING = "uname";
+			$PSWORD_STRING = "psword";
+			$ATTEMPTS_STRING = "attempts";
+			$FIRST_NAME_STRING = "fname";
+			$LOCK_TIME_STRING = "lock_time";
+			$DB_USER = "root";
+			$DB_PASS = "huntin";
+			$DB_NAME = "reg2";
+		?>
+			
+		<?php
+		$errors = array();
+		$errors[$LOCK_STRING] ="";
+		$errors[$UNAME_STRING]= "";
+		$errors[$PSWORD_STRING]= "";
 		if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 			if($_POST['button']=='Login'){
-				$uname= $_POST['uname'];
-				$psword= $_POST['psword'];
-			
-				$error = array();
-		
-				if(empty($uname)) $error[]= "You forgot to enter user name.";
-				if(empty($psword)) $error[]= "You forgot to enter password.";
-			
-				if(empty($error)) {
-					/*
-					connect to database
-					search users table to find the user
-					if found
-						verify password
-						if correct
-							//do something here
-						else
-							report incorrect password
-					else
-						report unknown user
-					*/
-					$dbc = mysqli_connect('localhost', 'root', 'huntin', 'reg2')
-						or die("cannot connect to database.");
+				$uname= $_POST[$UNAME_STRING];
+				$psword= $_POST[$PSWORD_STRING];
+				
+				if(empty($uname)) $errors[$UNAME_STRING]= "You forgot to enter user name.";
+				if(empty($psword)) $errors[$PSWORD_STRING]= "You forgot to enter password.";
+			  
+				if(empty($errors[$UNAME_STRING]) && empty($errors[$PSWORD_STRING])) {
+					$dbc = mysqli_connect('localhost', $DB_USER, $DB_PASS, $DB_NAME)
+																or die("cannot connect to database.");
 					
-					$q = "SELECT * FROM users WHERE uname = '$uname'";
-					
-					$r = mysqli_query($dbc, $q);
-					
-					$num = mysqli_num_rows($r);
-					
+					$q = "SELECT * FROM users WHERE uname = '$uname'";					
+					$r = mysqli_query($dbc, $q);					
+					$num = mysqli_num_rows($r);					
 					if ($num == 1){
 						$row = mysqli_fetch_array($r);
-						
-						$pwd = SHA1($psword);
-						
-						if ($pwd == $row['psword']){
-							session_start();
-							
-							$_SESSION['uname'] = $uname;
-							$_SESSION['fname'] = $row['fname'];
-							
-							if($row['role'] == 'student')
-								//header('LOCATION: student.php');
-								echo "<script>window.open('student.php', '_SELF')</script>";
-							else 
-								header('LOCATION: admin.php');
-						}
-						else {
-							echo "incorrect password";
-						}
+						$locked = false;
+						if(isset($row[$LOCK_TIME_STRING]) && !empty($row[$LOCK_TIME_STRING])) {
+							$lockTime = strtotime($row[$LOCK_TIME_STRING]);
+							$minAgo = strtotime("- 1 min");
+							if($lockTime > $minAgo) {//lock for  minute
+	            //LOCKED
+                $locked = true;
+								$waitTime = $lockTime-$minAgo;
+								$errors[$LOCK_STRING] = 'You are blocked from accessing the'
+																				.' system. You need to wait for '
+																				.$waitTime
+																				.' seconds.';
+              } else {//clear the lock time
+                 $r = update($dbc, $LOCK_TIME_STRING, "NULL", $uname);
+								 if(!$r){ echo "Could not clear lock"; } 
+			        }
+            }
+            if(!$locked) {
+				  		$pwd = SHA1($psword);
+							if ($pwd == $row[$PSWORD_STRING]){
+								$r = update($dbc, $ATTEMPTS_STRING, 0, $uname);
+								if(!$r){ die("Could not update attempt count"); }
+   							session_start();
+								$_SESSION[$UNAME_STRING] = $uname;
+								$_SESSION[$FIRST_NAME_STRING] = $row[$FIRST_NAME_STRING];
+								if($row['role'] == 'student') {
+-								  header('LOCATION: student.php');
+								} else {
+-								  header('LOCATION: admin.php');
+								}
+								}
+								else {
+									if(isset($row[$ATTEMPTS_STRING])) {
+										$attempts = $row[$ATTEMPTS_STRING];
+									} else {
+										$attempts = 0;
+									}									
+									$attempts = $attempts + 1;
+									$attemptsLeft = (3- $attempts);
+									$errors[$PSWORD_STRING] = "Incorrect Password $attemptsLeft attempts left.";
+									if($attempts == 3) {
+										$attempts = $attempts % 3; // only store 0 - 2
+										$r = update($dbc, $LOCK_TIME_STRING, date('Y-m-d H:i:s'), $uname);
+										if(!$r){ die("Could not set timestamp."); } 
+									}
+									$r = update($dbc, $ATTEMPTS_STRING, $attempts, $uname);
+									if(!$r){ die("Could not update attempt count"); } 
+								}
+              }
 					}
-					else 
-						echo "unknown username.";
-						
-				}
-				else {
-					//print error information
-					foreach ($error as $err){
-						echo $err;
-						echo "<br>";
+					else {
+						$errors[$UNAME_STRING]="unknown username.";
 					}
 				}
 			}
 			else {   //register button was hit
-				$role = $_POST['role'];
-				if (empty($role)) 
-					echo "You forgot to select a role.";
-				else
-					header('LOCATION: register.php?role='.$role);
-					//echo "<script>window.open('register.php', '_SELF')</script>";
+				header('LOCATION: register.php');
 			}
 		}
 		?>
@@ -113,19 +139,49 @@
 	
 		<div style = "padding: 50px 0px">
 		<form action="" method="POST">
-			<center><table>
+			<center>
+				<table>
+			  <tr>
+					<td>
+						<div style="color: red">
+					    <?php echo $errors[$UNAME_STRING]; ?>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div style="color: red">
+					    <?php echo $errors[$PSWORD_STRING]; ?>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div style="color: red">
+					    <?php echo $errors[$LOCK_STRING]; ?>
+						</div>
+					</td>
+				</tr>
+				</table>
+			</center>
+			<center>
+			<table>
 				<tr>
 					<td>Username:</td>
-					<td><input type="text" name="uname"></td>					
+					<td>						
+						<input type="text" name="<?php echo $UNAME_STRING; ?>">
+					</td>
 				</tr>
 				<tr>
 					<td>Password:</td>
-					<td><input type="password" name="psword"></td>	
+					<td>
+						<input type="password" name="<?php echo $PSWORD_STRING; ?>">
+					</td>
 				</tr>
 	
 			</table></center>
-			<div style="padding: 0px 450px" >
-				<input type="submit" name="button" value="Login" >
+			<div style="padding: 0px 450px;" >
+				<input type="submit" name="button" value="Login" />
 			</div>
 		</form>
 		</div>
