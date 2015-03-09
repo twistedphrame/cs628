@@ -39,6 +39,7 @@
 				$dbc = mysqli_connect('localhost', 'root', 'huntin', 'reg2')
 															or die("Cannot connect to database");
 															
+							
 				$q = "Select * FROM users WHERE uname='$uname'";
 				$r = mysqli_query($dbc, $q);
 				if($r) {
@@ -54,6 +55,7 @@
 					die("<div>Could not find user?</div>");
 				}
 			} else {
+				$r = false;
 				$fname = (isset($_POST['fname']) ? $_POST['fname'] : '');
 				$lname = (isset($_POST['lname']) ? $_POST['lname'] : '');
 				$major = (isset($_POST['major']) ? $_POST['major'] : '');
@@ -243,7 +245,7 @@
 								if($r) {
 									echo "Succesfully Updated"; 
 								} else {
-									echo "Failed to update";
+									echo '<div style="color: red;">Failed to update</div>';
 								}
 							}
 							?>
