@@ -100,6 +100,17 @@
    							session_start();
 								$_SESSION[$UNAME_STRING] = $uname;
 								$_SESSION[$FIRST_NAME_STRING] = $row[$FIRST_NAME_STRING];
+								
+								/**
+								 * Cookies let you have persistant 'sessions'
+								 * between opening and closing browsers or
+								 * as a normal session.
+								 * You can do this with cookies like this:
+ 								 */ //time() is in seconds
+								 // name, value, expiration
+								setcookie('uname', $uname, time()+3600);
+								setcookie('fname', $row[$FIRST_NAME_STRING], time()+3600);
+								
 								if($row['role'] == 'student') {
 -								  header('LOCATION: student.php');
 								} else {

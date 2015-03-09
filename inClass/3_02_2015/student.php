@@ -12,15 +12,16 @@
 	<div id = "content">
 		<?php
 			session_start();
-
-			if (empty($_SESSION['uname'])){
+     
+			//if (empty($_SESSION['uname'])){
+			if (empty($_COOKIE['uname'])) {
 				header('LOCATION: index_3.php');
 				//echo "<script>window.open('index_3.php', '_SELF')</script>";
 			}
 
 			//retrieve session data
-			$uname = $_SESSION['uname'];
-			$fname = $_SESSION['fname'];
+			$uname = $_COOKIE['uname'];//$_SESSION['uname'];
+			$fname = $_COOKIE['fname'];//$_SESSION['fname'];
 		?>
 	
 		<h1>Welcome, <?php echo $uname ?>!</h1>

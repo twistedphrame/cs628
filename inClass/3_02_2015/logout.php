@@ -13,8 +13,11 @@
 		<?php
 			session_start();
 			$_SESSION = array();
-			session_destroy()
-
+			session_destroy();
+			
+			//destroys the cookie
+			setcookie('uname');
+			setcookie('fname');
 		?>
 	
 		<h1>You have logged out successfully!</h1>
