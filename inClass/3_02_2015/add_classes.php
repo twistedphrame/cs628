@@ -28,6 +28,18 @@
         
         <div id="main">
             <div align="center">
+             
+             <?php
+               $SUBJ_STRING = "subject";
+               $CODE_STRING = "code";
+               $SECTION_STRING = "section";
+               $NAME_STRING = "name";
+               $SCHEDULE_STRING = "sched";
+               $PROFESSOR_STRING = "prof";
+               $ROOM_STRING = "room";             
+             ?>
+                
+                
             <?php
                 session_start();
      
@@ -39,54 +51,54 @@
                 
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $success = '';
-                    $subject = (isset($_POST['subject']) ? $_POST['subject'] : '');
-                    $code = (isset($_POST['code']) ? $_POST['code'] : '');
-                    $section = (isset($_POST['section']) ? $_POST['section'] : '');
-                    $name = (isset($_POST['name']) ? $_POST['name'] : '');
-                    $schedule = (isset($_POST['sched']) ? $_POST['sched'] : '');
-                    $prof = (isset($_POST['prof']) ? $_POST['prof'] : '');
-                    $room = (isset($_POST['room']) ? $_POST['room'] : '');
+                    $subject = (isset($_POST[$SUBJ_STRING]) ? $_POST[$SUBJ_STRING] : '');
+                    $code = (isset($_POST[$CODE_STRING]) ? $_POST[$CODE_STRING] : '');
+                    $section = (isset($_POST[$SECTION_STRING]) ? $_POST[$SECTION_STRING] : '');
+                    $name = (isset($_POST[$NAME_STRING]) ? $_POST[$NAME_STRING] : '');
+                    $schedule = (isset($_POST[$SCHEDULE_STRING]) ? $_POST[$SCHEDULE_STRING] : '');
+                    $prof = (isset($_POST[$PROFESSOR_STRING]) ? $_POST[$PROFESSOR_STRING] : '');
+                    $room = (isset($_POST[$ROOM_STRING]) ? $_POST[$ROOM_STRING] : '');
                     
                     $errors = array();
                     if(empty($subject)) {
-                        $errors['subject'] = "Subject must be Specified";
+                        $errors[$SUBJ_STRING] = "Subject must be Specified";
                     } else {
-                        $errors['subject'] = '';
+                        $errors[$SUBJ_STRING] = '';
                     }
                     if(empty($code)) {
-                        $errors['code'] = "Code must be specified";
+                        $errors[$CODE_STRING] = "Code must be specified";
                     } else {
-                        $errors['code'] = '';
+                        $errors[$CODE_STRING] = '';
                     }
                     
                     if(empty($section)) {
-                        $errors['section'] = "Section must be specified";
+                        $errors[$SECTION_STRING] = "Section must be specified";
                     } else {
-                        $errors['section'] = '';
+                        $errors[$SECTION_STRING] = '';
                     }
                     
                     if(empty($name)) {
-                        $errors['name'] = "Name must be specified";
+                        $errors[$NAME_STRING] = "Name must be specified";
                     } else {
-                        $errors['name'] = '';
+                        $errors[$NAME_STRING] = '';
                     }
                     
                     if(empty($schedule)) {
-                        $errors['sched'] = "Schedule must be specified";
+                        $errors[$SCHEDULE_STRING] = "Schedule must be specified";
                     } else {
-                        $errors['sched'] = '';
+                        $errors[$SCHEDULE_STRING] = '';
                     }
                     
                     if(empty($prof)) {
-                        $errors['prof'] = "Professor must be specified";
+                        $errors[$PROFESSOR_STRING] = "Professor must be specified";
                     } else {
-                        $errors['prof'] = '';
+                        $errors[$PROFESSOR_STRING] = '';
                     }
                     
                     if(empty($room)) {
-                        $errors['room'] = "Room must be specified";
+                        $errors[$ROOM_STRING] = "Room must be specified";
                     } else {
-                        $errors['room'] = '';
+                        $errors[$ROOM_STRING] = '';
                     }
                     $valid = true;
                     foreach($errors as $error) {
@@ -152,7 +164,7 @@
                             <div style="color: red">
                             <?php //Drop down in PHP 
                               $subjects = array("MA","CS","SE","EN","HS","BM");
-                              echo "<select name=\"subject\" >";
+                              echo "<select name=\"$SUBJ_STRING\" >";
                               $sub = (isset($subject) ? $subject: '');
                               foreach ($subjects as $subj) {
                                 echo '<option value="'.$subj.'"';
@@ -162,8 +174,8 @@
                                 echo '>'.$subj.'</option>';
                               }
                               echo "</select>";
-                              if(isset($errors['subject']) && !empty($errors['subject'])) {
-                                echo $errors['subject'];
+                              if(isset($errors[$SUBJ_STRING])) {
+                                echo $errors[$SUBJ_STRING];
                               }
                             ?>
                             </div>
@@ -173,11 +185,13 @@
                         <td>Code:</td>
                         <td>
                             <div style="color: red">
-                            <input type="code" name="code" value =
-                                   <?php echo "\"".(isset($code) ? $code:"")."\""; ?> />
+                            <input type="text" name=
                             <?php
-                                if(isset($errors['code']))
-                                    echo $errors['code'];
+                                echo '"'.$CODE_STRING.'" value=';                                
+                                echo "\"".(isset($code) ? $code:"")."\""; ?> />
+                            <?php
+                                if(isset($errors[$CODE_STRING]))
+                                    echo $errors[$CODE_STRING];
                             ?>
                             </div>
                         </td>
@@ -186,11 +200,13 @@
                         <td>Section:</td>
                         <td>
                             <div style="color: red">
-                            <input type="text" name="section" value=
-                            <?php echo "\"".(isset($section) ? $section:"")."\""; ?> />
+                            <input type="text" name=
                             <?php
-                                if(isset($errors['section']))
-                                    echo $errors['section'];
+                                echo '"'.$SECTION_STRING.'" value=';
+                                echo "\"".(isset($section) ? $section:"")."\""; ?> />
+                            <?php
+                                if(isset($errors[$SECTION_STRING]))
+                                    echo $errors[$SECTION_STRING];
                             ?>
                             </div>
                         </td>
@@ -199,11 +215,13 @@
                     <td>Name:</td>
                         <td>
                             <div style="color: red">
-                            <input type="text" name="name" value=
-                            <?php echo "\"".(isset($name) ? $name:"")."\""; ?> />
+                            <input type="text" name=
                             <?php
-                                if(isset($errors['name']))
-                                    echo $errors['name'];
+                                echo '"'.$NAME_STRING.'" value=';
+                               echo "\"".(isset($name) ? $name:"")."\""; ?> />
+                            <?php
+                                if(isset($errors[$NAME_STRING]))
+                                    echo $errors[$NAME_STRING];
                             ?>
                             </div>
                         </td>
@@ -212,11 +230,13 @@
                         <td>Schedule</td>
                         <td>
                             <div style="color: red">
-                            <input type="text" name="sched" value=
-                            <?php echo "\"".(isset($schedule) ? $schedule:"")."\""; ?> />
+                            <input type="text" name=
                             <?php
-                                if(isset($errors['sched']))
-                                    echo $errors['sched'];
+                                 echo '"'.$SCHEDULE_STRING.'" value=';
+                                echo "\"".(isset($schedule) ? $schedule:"")."\""; ?> />
+                            <?php
+                                if(isset($errors[$SCHEDULE_STRING]))
+                                    echo $errors[$SCHEDULE_STRING];
                             ?>
                             </div>
                         </td>
@@ -225,11 +245,13 @@
                         <td>Professor</td>
                         <td>
                             <div style="color: red">
-                            <input type="text" name="prof" value=
-                            <?php echo "\"".(isset($professor) ? $professor:"")."\""; ?> />
+                            <input type="text" name=
                             <?php
-                                if(isset($errors['prof']))
-                                    echo $errors['prof'];
+                              echo '"'.$PROFESSOR_STRING.'" value=';
+                              echo "\"".(isset($professor) ? $professor:"")."\""; ?> />
+                            <?php
+                                if(isset($errors[$PROFESSOR_STRING]))
+                                    echo $errors[$PROFESSOR_STRING];
                             ?>
                             </div>
                         </td>
@@ -238,11 +260,13 @@
                         <td>Room</td>
                         <td>
                             <div style="color: red">
-                            <input type="text" name="room" value=
-                            <?php echo "\"".(isset($room) ? $room:"")."\""; ?> />
+                            <input type="text" name=
                             <?php
-                                if(isset($errors['room']))
-                                    echo $errors['room'];
+                                echo '"'.$ROOM_STRING.'" value=';
+                                echo "\"".(isset($room) ? $room:"")."\""; ?> />
+                            <?php
+                                if(isset($errors[$ROOM_STRING]))
+                                    echo $errors[$ROOM_STRING];
                             ?>
                             </div>
                         </td>
@@ -257,7 +281,9 @@
                             <td>
                                 <input type="submit" name="button" value="Register"/>
                             </td>
-                            <td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
                                 <?php
                                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   if(!empty($success)) {
