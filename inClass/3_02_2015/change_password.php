@@ -36,8 +36,8 @@
 	    $NEW_PSWORD1_STRING = "newpass1";
 	    $NEW_PSWORD2_STRING = "newpass2";
 	    $DB_USER = "root";
-	    $DB_PASS = "";
-	    $DB_NAME = "registration";
+	    $DB_PASS = "huntin";
+	    $DB_NAME = "reg2";
 	?>
 	<?php
 	    $errors = array();
