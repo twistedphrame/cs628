@@ -118,8 +118,7 @@
                     
                     if($valid) {
                       //or die shows an message when that does not work
-                        $dbc = mysqli_connect('localhost', 'root', 'huntin', 'reg2')
-                            or die("Cannot connect to database");
+                        include("dbc.php");
                         
                         //Insertion query
                         $q = "INSERT INTO users (uname,

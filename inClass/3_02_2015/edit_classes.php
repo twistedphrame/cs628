@@ -13,9 +13,6 @@
 		
 		<?php
 			$SUBJ_STRING = "subject";
-			$DB_USER = "root";
-			$DB_PASS = "huntin";
-			$DB_NAME = "reg2";
 		?>
 		
 		<?php
@@ -33,7 +30,7 @@
 		?>
 			<form action="" method="POST">
 				<center>
-					<table>
+					<table border="1">
 						<tr>
 							<td>
 								<?php //Drop down in PHP 
@@ -54,8 +51,7 @@
 			</form>
 			<?php
 				if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-					$dbc = mysqli_connect('localhost', $DB_USER, $DB_PASS, $DB_NAME)
-																or die("cannot connect to database.");
+					include("dbc.php");
 																//edit will use a GET to show editClass?classID page
 																//delete will go to a page to delete the record and
 																// will return the you to the this page
@@ -65,13 +61,13 @@
 					$r = mysqli_query($dbc, $q);
 					if($r) {
 					 while ($row = mysqli_fetch_assoc($r)) {
-						echo "<tr><td>" + $row['subject'] + "</td>";
-						echo "<td>" + $row['code'] + "</td>";
-						echo "<td>" + $row['section'] + "</td>";
-						echo "<td>" + $row['name'] + "</td>";
-					  echo "<td>" + $row['schedule'] + "</td>";
-						echo "<td>" + $row['professor'] + "</td>";
-						echo "<td>" + $row['room'] + "</td>";
+						echo "<tr><td>{$row['subject']}</td>";
+						echo "<td>{$row['code']}</td>";
+						echo "<td>{$row['section']}</td>";
+						echo "<td>{$row['name']}</td>";
+					  echo "<td>{$row['schedule']}</td>";
+						echo "<td>{$row['professor']}</td>";
+						echo "<td>{$row['room']}</td>";
 						echo "<td>Edit</td><td>Delete</td></tr>";
 					 }
 					}

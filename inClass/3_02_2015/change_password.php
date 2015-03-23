@@ -7,7 +7,9 @@
 <body>
 
 <div id="container">
-    <?php include("includes/header.html"); ?>
+    <?php
+			include("insertHeader.php");
+		?>
     <div id="content">
 	<div style = "padding: 15px 0px">
 	    <center>
@@ -23,11 +25,6 @@
 	<?php
 	
 	   $UNAME_STRING = 'uname';
-	    session_start();
-	    if (empty($_COOKIE[$UNAME_STRING])) {
-		    header('LOCATION: index_3.php');
-	    }
-	    //retrieve session data
 	    $uname = $_COOKIE[$UNAME_STRING];//$_SESSION['uname'];
 	    $fname = $_COOKIE['fname'];//$_SESSION['fname'];
 	    
@@ -35,9 +32,6 @@
 	    $PSWORD_STRING = "psword";
 	    $NEW_PSWORD1_STRING = "newpass1";
 	    $NEW_PSWORD2_STRING = "newpass2";
-	    $DB_USER = "root";
-	    $DB_PASS = "huntin";
-	    $DB_NAME = "reg2";
 	?>
 	<?php
 	    $errors = array();
@@ -59,8 +53,7 @@
 		} elseif($newpsword1 === $oldPass) {
 		   $errors[$ERR_STRING]= "New Password is the same as the old password.";
 		}else {
-		    $dbc = mysqli_connect('localhost', $DB_USER, $DB_PASS, $DB_NAME)
-				    or die("cannot connect to database.");
+				include("dbc.php");
 		    $q = "SELECT * FROM users WHERE uname = '$uname'";
 		    $r = mysqli_query($dbc, $q);					
 		    $num = mysqli_num_rows($r);					

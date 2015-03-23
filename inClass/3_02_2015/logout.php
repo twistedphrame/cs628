@@ -7,17 +7,19 @@
 
 <body>
 	<div id = "container">
-	<?php include("includes/header.html"); ?>
+	<?php
+			include("insertHeader.php");
+	?>
 	
 	<div id = "content">
 		<?php
-			session_start();
 			$_SESSION = array();
 			session_destroy();
 			
 			//destroys the cookie
 			setcookie('uname');
 			setcookie('fname');
+			setcookie('role');
 		?>
 	
 		<h1>You have logged out successfully!</h1>

@@ -7,20 +7,15 @@
 
 <body>
 	<div id = "container">
-	<?php include("includes/header.html"); ?>
+	<?php
+			include("insertHeader.php");
+	?>
 	
 	<div id = "content">
 		<?php
-			session_start();
-
-			if (empty($_SESSION['uname'])){
-				header('LOCATION: index_3.php');
-				//echo "<script>window.open('index_3.php', '_SELF')</script>";
-			}
-
 			//retrieve session data
-			$uname = $_SESSION['uname'];
-			$fname = $_SESSION['fname'];
+			$uname = $_COOKIE['uname'];//$_SESSION['uname'];
+			$fname = $_COOKIE['fname'];//$_SESSION['fname'];
 			$lname = '';
 			$major = '';
 			$address = '';
@@ -36,9 +31,7 @@
 			$errors["email"] = '';
 			$errors["phone"] = '';
 			if ($_SERVER['REQUEST_METHOD'] !== "POST") {
-				$dbc = mysqli_connect('localhost', 'root', 'huntin', 'reg2')
-															or die("Cannot connect to database");
-															
+				include("dbc.php");
 							
 				$q = "Select * FROM users WHERE uname='$uname'";
 				$r = mysqli_query($dbc, $q);
@@ -110,8 +103,7 @@
 				}
 				
 				if($valid) {
-					$dbc = mysqli_connect('localhost', 'root', 'huntin', 'reg2')
-															or die("Cannot connect to database");
+					include("dbc.php");
 					$q = "UPDATE users SET fname='$fname',
 					                       lname='$lname',
 																 address='$address',

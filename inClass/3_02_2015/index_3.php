@@ -48,9 +48,6 @@
 			$ATTEMPTS_STRING = "attempts";
 			$FIRST_NAME_STRING = "fname";
 			$LOCK_TIME_STRING = "lock_time";
-			$DB_USER = "root";
-			$DB_PASS = "huntin";
-			$DB_NAME = "reg2";
 		?>
 			
 		<?php
@@ -67,9 +64,7 @@
 				if(empty($psword)) $errors[$PSWORD_STRING]= "You forgot to enter password.";
 			  
 				if(empty($errors[$UNAME_STRING]) && empty($errors[$PSWORD_STRING])) {
-					$dbc = mysqli_connect('localhost', $DB_USER, $DB_PASS, $DB_NAME)
-																or die("cannot connect to database.");
-					
+					include("dbc.php");				
 					$q = "SELECT * FROM users WHERE uname = '$uname'";					
 					$r = mysqli_query($dbc, $q);					
 					$num = mysqli_num_rows($r);					
@@ -100,7 +95,7 @@
    							session_start();
 								$_SESSION[$UNAME_STRING] = $uname;
 								$_SESSION[$FIRST_NAME_STRING] = $row[$FIRST_NAME_STRING];
-								
+								$_SESSION['role'] = $row['role'];
 								/**
 								 * Cookies let you have persistant 'sessions'
 								 * between opening and closing browsers or
@@ -110,7 +105,7 @@
 								 // name, value, expiration
 								setcookie('uname', $uname, time()+3600);
 								setcookie('fname', $row[$FIRST_NAME_STRING], time()+3600);
-								
+								setcookie('role', $row['role'], time()+3600);
 								if($row['role'] == 'student') {
 -								  header('LOCATION: student.php');
 								} else {
