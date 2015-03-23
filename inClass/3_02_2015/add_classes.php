@@ -246,7 +246,7 @@
                             <input type="text" name=
                             <?php
                               echo '"'.$PROFESSOR_STRING.'" value=';
-                              echo "\"".(isset($professor) ? $professor:"")."\""; ?> />
+                              echo "\"".(isset($prof) ? $prof:"")."\""; ?> />
                             <?php
                                 if(isset($errors[$PROFESSOR_STRING]))
                                     echo $errors[$PROFESSOR_STRING];

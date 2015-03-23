@@ -48,7 +48,6 @@
 						</tr>
 					</table>
 				</center>
-			</form>
 			<?php
 				if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					include("dbc.php");
@@ -68,13 +67,14 @@
 					  echo "<td>{$row['schedule']}</td>";
 						echo "<td>{$row['professor']}</td>";
 						echo "<td>{$row['room']}</td>";
-						echo "<td>Edit</td><td>Delete</td></tr>";
+						echo "<td><input type=\"button\" onclick=\"parent.location='edit_class.php?class_id={$row['class_id']}'\" value='Edit' /></td>";
+						echo "<td>Delete</td></tr>";
 					 }
 					}
 					echo "</table></center></form>";
 				}		
 			?>
-
+			</form>
 	</div>
 	
 	<div id = "footer">
