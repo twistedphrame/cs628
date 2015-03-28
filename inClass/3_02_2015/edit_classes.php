@@ -8,8 +8,47 @@
 <body>
 	<div id = "container">
 	<?php include("includes/header_admin.html"); ?>
-	
+	<?php include("htmlTricks.php"); ?>
 	<div id = "content">
+		
+		<script>
+			function confirmDelete(classID, className, subject) {
+				//document.getElementById("footer").innerHTML = classID + " className";
+
+				var r = confirm(className +" Will be deleted.");
+				if (r == true) {
+					var xhr;
+					if (window.XMLHttpRequest) {
+							xhr = new XMLHttpRequest();
+					}
+					else if (window.ActiveXObject) {
+							xhr = new ActiveXObject("Msxml2.XMLHTTP");
+					}
+					else {
+							throw new Error("Ajax is not supported by this browser");
+					}
+					
+					//what do I do when i get a response back
+					xhr.onreadystatechange = function () {
+						if (xhr.readyState === 4) {
+							if (xhr.status == 200 && xhr.status < 300) {
+								window.location.replace('edit_classes.php?subject='+subject, '_SELF')
+							}
+						}
+					}
+					xhr.open('POST', 'delete_class.php');
+					xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+					xhr.send("classid=" + classID);
+				}
+			}
+			
+			function displayClasses() {
+				var subjectSelect = document.getElementById("subject");
+				var subjectText = subjectSelect.options[subjectSelect.selectedIndex].text;
+				window.location.replace('edit_classes.php?subject='+subjectText, '_SELF');
+			}
+		</script>
+		
 		
 		<?php
 			$SUBJ_STRING = "subject";
@@ -21,7 +60,6 @@
 			//if (empty($_SESSION['uname'])){
 			if (empty($_COOKIE['uname'])) {
 				header('LOCATION: index_3.php');
-				//echo "<script>window.open('index_3.php', '_SELF')</script>";
 			}
 
 			//retrieve session data
@@ -33,46 +71,51 @@
 					<table border="1">
 						<tr>
 							<td>
-								<?php //Drop down in PHP 
-                              $subjects = array("MA","CS","SE","EN","HS","BM");
-                              echo "<select name=\"$SUBJ_STRING\" >";
-                              foreach ($subjects as $subj) {
-                                echo '<option value="'.$subj.'">'.$subj.'</option>';
-                              }
-                              echo "</select>";
-								?>								
+								<?php //Drop down in PHP
+								  $concentrations = concentrations();
+									$subject = $concentrations[0];
+									if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET[$SUBJ_STRING])) {
+										$subject=$_GET[$SUBJ_STRING];
+									}
+								  createDropDown($SUBJ_STRING, concentrations(), $subject);
+								?>
 							</td>
 							<td>
-								<input type="submit" name="display" value="Display"/>
+								<input type="button"
+											 onclick="displayClasses()" name="display" value="Display"/>
 							</td>
 						</tr>
 					</table>
 				</center>
 			<?php
-				if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+				$r = false;
+				$q ='';
+				if($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET[$SUBJ_STRING])) {
 					include("dbc.php");
-																//edit will use a GET to show editClass?classID page
-																//delete will go to a page to delete the record and
-																// will return the you to the this page
-					echo '<form><center><table border="1">';
-					echo "<tr><td>Subject</td><td>Code</td><td>Section</td><td>Name</td><td>Schedule</td><td>Professor</td><td>Room</td><td>Edit</td><td>Delete</td></tr>";
-					$q = "SELECT * FROM classes WHERE subject='$_POST[$SUBJ_STRING]';";
+					$q = "SELECT * FROM classes WHERE subject='$_GET[$SUBJ_STRING]';";
 					$r = mysqli_query($dbc, $q);
-					if($r) {
+				}
+				if(!empty($q)) {
+					echo '<form><center><table border="3"  cellspacing="10">';
+					echo '<tr><td align="center">Subject</td><td align="center">Code</td><td align="center">Section</td><td align="center">Name</td>';
+					echo '<td align="center">Schedule</td><td align="center">Professor</td><td align="center">Room</td><td align="center">Edit</td><td align="center">Delete</td></tr>';
+				if($r) {
 					 while ($row = mysqli_fetch_assoc($r)) {
-						echo "<tr><td>{$row['subject']}</td>";
-						echo "<td>{$row['code']}</td>";
-						echo "<td>{$row['section']}</td>";
-						echo "<td>{$row['name']}</td>";
-					  echo "<td>{$row['schedule']}</td>";
-						echo "<td>{$row['professor']}</td>";
-						echo "<td>{$row['room']}</td>";
-						echo "<td><input type=\"button\" onclick=\"parent.location='edit_class.php?class_id={$row['class_id']}'\" value='Edit' /></td>";
-						echo "<td>Delete</td></tr>";
+						echo "<tr><td>{$row['subject']}</td>\n";
+						echo "<td>{$row['code']}</td>\n";
+						echo "<td>{$row['section']}</td>\n";
+						echo "<td>{$row['name']}</td>\n";
+					  echo "<td>{$row['schedule']}</td>\n";
+						echo "<td>{$row['professor']}</td>\n";
+						echo "<td>{$row['room']}</td>\n";
+						echo "<td><input type=\"button\" onclick=\"parent.location='edit_class.php?class_id={$row['class_id']}'\" value='Edit' /></td>\n";
+						echo "<td><input type=\"button\" \n";
+						echo 'onclick="confirmDelete(\''.$row['class_id'].'\',\''.$row['subject'].' '.$row['code'].'-'.$row['section'].'\',\''.$row['subject'].'\')" ';
+						echo "value=\"Delete\" /></td></tr>\n";
 					 }
 					}
 					echo "</table></center></form>";
-				}		
+				}
 			?>
 			</form>
 	</div>

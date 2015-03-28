@@ -9,6 +9,7 @@
 	<div id = "container">
 	<?php
 			include("insertHeader.php");
+			include("htmlTricks.php");
 	?>
 	
 	<div id = "content">
@@ -150,18 +151,10 @@
 					</tr>
 					<tr>
 						<td>Major:</td>
-						<td><?php //Drop down in PHP 
-                              $majors = array("MA","CS","SE","EN","HS","BM");
-                              echo "<select name=\"major\" >";
-                              foreach ($majors as $maj) {
-                                echo '<option value="'.$maj.'"';
-                                if($maj == $major) {
-                                    echo ' selected = "selected"';
-                                }
-                                echo '>'.$maj.'</option>';
-                              }
-                              echo "</select>";
-                            ?></td>
+						<td><?php //Drop down in PHP
+						   createDropDown('major', concentrations(), $major);
+							 ?>
+						</td>
 					</tr>
 					<tr>
 						<td>Address:</td>
@@ -189,18 +182,9 @@
 					</tr>
 					<tr>
 						<td>State:</td>
-					   <td><?php //Drop down in PHP 
-                              $states = array("NJ","PA","FL","MN","MO","NY");
-                              echo "<select name=\"state\">";
-                              foreach ($states as $stat) {
-                                echo '<option value="'.$stat.'"';
-                                if($stat == $state) {
-                                    echo ' selected = "selected"';
-                                }
-                                echo '>'.$stat.'</option>';
-                              }
-                              echo "</select>";
-                            ?>
+					   <td><?php //Drop down in PHP
+								createDropDown('state', states(), $state);
+								?>
 					  </td>
 					</tr>
 					<tr>

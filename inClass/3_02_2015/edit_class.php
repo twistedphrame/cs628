@@ -23,23 +23,23 @@
       {grey}
     -->
     <body>
+
       <div id="container">
         <?php include("includes/header_admin.html"); ?>
         <?php include("htmlTricks.php"); ?>
         <div id="main">
             <div align="center">
-             
              <?php
                $SUBJ_STRING = "subject";
                $CODE_STRING = "code";
                $SECTION_STRING = "section";
                $NAME_STRING = "name";
-               $SCHEDULE_STRING = "sched";
-               $PROFESSOR_STRING = "prof";
+               $SCHEDULE_STRING = "schedule";
+               $PROFESSOR_STRING = "professor";
                $ROOM_STRING = "room";             
              ?>
                 
-                
+                <h1>Edit Class</h1>
             <?php
                 session_start();
      
@@ -47,6 +47,26 @@
                 if (empty($_COOKIE['uname'])) {
                   header('LOCATION: index_3.php');
                   //echo "<script>window.open('index_3.php', '_SELF')</script>";
+                }
+                
+                $class_id ='';
+                if(isset($_GET['class_id'])) {
+                    $class_id = $_GET['class_id'];
+                    include("dbc.php");
+                    $q = "SELECT * FROM classes WHERE class_id='{$_GET['class_id']}';";
+                    $r = mysqli_query($dbc, $q);
+                    if($r) {
+                        $row = mysqli_fetch_assoc($r);
+                        $subject = $row[$SUBJ_STRING];
+                        $code = $row[$CODE_STRING];
+                        $section = $row[$SECTION_STRING];
+                        $name = $row[$NAME_STRING];
+                        $schedule = $row[$SCHEDULE_STRING];
+                        $prof = $row[$PROFESSOR_STRING];
+                        $room = $row[$ROOM_STRING];
+                    } else {
+                        die ("Class could not be found try again later.");
+                    }
                 }
                 
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -108,38 +128,21 @@
                         }
                     }
                     
-                    if($valid) {
-                      //or die shows an message when that does not work
-                        include("dbc.php");                       
-                        //Insertion query
-                        $q = "INSERT INTO classes (subject,
-                                                code,
-                                                section,
-                                                name,
-                                                schedule,
-                                                professor,
-                                                room) VALUES
-                                               ('$subject',
-                                                '$code',
-                                                '$section',
-                                                '$name',
-                                                '$schedule',
-                                                '$prof',
-                                                '$room')";
-                        
+                    if($valid) {              
+                        //update query
+                        $q = "Update classes SET subject='$subject',
+                                                code='$code',
+                                                section='$section',
+                                                name='$name',
+                                                schedule='$schedule',
+                                                professor='$prof',
+                                                room='$room'
+                                            WHERE class_id='$class_id'";
                         //execute the query
                         $r = mysqli_query($dbc, $q);
                         //check to make sure it's there
-                        if($r) {
-                            
-                            $success = "Class: $subject $code-$section has been added";
-                            $subject = '';
-                            $code = '';
-                            $section = '';
-                            $name = '';
-                            $schedule = '';
-                            $prof = '';
-                            $room = '';                           
+                        if($r) {                            
+                            $success = "Class: $subject $code-$section has been updated";
                         } else {
                             $success = '';
                         }
@@ -261,24 +264,25 @@
                     </tr>
                  </table>
                 <div style="padding: 5px;" align="center">
-                    <table>
+                    <table style="width:100%">
                         <tr>
-                            <td>
-                              <input type="button" onclick="parent.location='admin.php'" value='Back' />
+                            <td align="right">
+                              <input type="button" onclick="parent.location='edit_classes.php'" value='Back' />
                             </td>
                             <td>
-                                <input type="submit" name="button" value="Register"/>
+                                <input type="submit" name="button" value="Update"/>
                             </td>
+                            <td></td>
                         </tr>
                         <tr>
-                            <td colspan="2">
+                            <td colspan="3" align="center">
                                 <?php
                                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   if(!empty($success)) {
                                     echo '<div style="color: black;">'.$success.'</div>';
                                   }
                                   else {
-                                    echo '<div style="color: red;">Class could not be added</div';
+                                    echo '<div style="color: red;">Class could not be updated</div';
                                   }
                                 }
                                 ?>
@@ -286,8 +290,8 @@
                         </tr>
                     </table>
                 </div>
-            </div>
             </form>
+            </div>
         </div>
         <div id="footer">
             <h5 align="center">Copyright 2015 Monmouth University</h5>

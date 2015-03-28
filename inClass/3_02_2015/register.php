@@ -12,7 +12,7 @@
         #footer {height: 30px; line-height: 30px; background-color: blue; color: white;}
         table { padding-left: 200px;}
     </style> <!-- height == line-height vertically centers the text -->
-    
+    <?php include("htmlTricks.php"); ?>
     <!-- design layout
        grey
       - -  - - - - - - - - - - - - -  - 
@@ -230,18 +230,8 @@
                     <tr>
                         <td>Major:</td>
                         <td>
-                            <?php //Drop down in PHP 
-                              $majors = array("MA","CS","SE","EN","HS","BM");
-                              echo "<select name=\"major\" >";
-                              $maj = (isset($_POST['major']) ? $_POST['major']: '');
-                              foreach ($majors as $major) {
-                                echo '<option value="'.$major.'"';
-                                if($maj == $major) {
-                                    echo ' selected = "selected"';
-                                }
-                                echo '>'.$major.'</option>';
-                              }
-                              echo "</select>";
+                            <?php //Drop down in PHP
+                              createDropDown('major', concentrations(), (isset($_POST['major']) ? $_POST['major']: ''));
                             ?>
                         </td>
                     </tr>
@@ -274,18 +264,8 @@
                     <tr>
                         <td>State</td>
                         
-                        <td><?php //Drop down in PHP 
-                              $states = array("NJ","PA","FL","MN","MO","NY");
-                              echo "<select name=\"state\">";
-                              $stat = (isset($_POST['state']) ? $_POST['state']: '');
-                              foreach ($states as $state) {
-                                echo '<option value="'.$state.'"';
-                                if($stat == $state) {
-                                    echo ' selected = "selected"';
-                                }
-                                echo '>'.$state.'</option>';
-                              }
-                              echo "</select>";
+                        <td><?php //Drop down in PHP
+                            createDropDown('state', states(), (isset($_POST['state']) ? $_POST['state']: ''));
                             ?></td>
                     </tr>
                     <tr>
@@ -323,7 +303,7 @@
                     <table>
                         <tr>
                             <td>
-                              <input type="button" onclick="parent.location='index_1.php'" value='Back' />
+                              <input type="button" onclick="parent.location='index_3.php'" value='Back' />
                             </td>
                             <td>
                                 <input type="submit" name="button" value="Register"/>

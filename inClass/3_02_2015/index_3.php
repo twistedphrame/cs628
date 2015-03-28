@@ -42,6 +42,8 @@
 				$query = "UPDATE users SET $colName='$colVal' where uname='$userName'";
         return mysqli_query($connection, $query);				
 			}
+			//php yells when you don't have a default time zone and you use strtotime
+			date_default_timezone_set('America/New_York');
 			$LOCK_STRING = "lock";
 			$UNAME_STRING = "uname";
 			$PSWORD_STRING = "psword";
